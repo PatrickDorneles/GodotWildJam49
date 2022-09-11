@@ -8,9 +8,28 @@
 
 config_version=4
 
+_global_script_classes=[ {
+"base": "Node",
+"class": "PlayerStatus",
+"language": "GDScript",
+"path": "res://entities/player/Status.gd"
+} ]
+_global_script_class_icons={
+"PlayerStatus": ""
+}
+
 [application]
 
 config/name="GodotWildJam49"
+run/main_scene="res://Game.tscn"
+
+[autoload]
+
+Gravity="*res://auto/Gravity.gd"
+
+[debug]
+
+gdscript/warnings/return_value_discarded=false
 
 [importer_defaults]
 
@@ -34,6 +53,38 @@ texture={
 "size_limit": 0,
 "stream": false,
 "svg/scale": 1.0
+}
+
+[input]
+
+move_left={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":65,"unicode":0,"echo":false,"script":null)
+ ]
+}
+move_right={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":68,"unicode":0,"echo":false,"script":null)
+ ]
+}
+look_up={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":87,"unicode":0,"echo":false,"script":null)
+ ]
+}
+look_down={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":83,"unicode":0,"echo":false,"script":null)
+ ]
+}
+jump={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":32,"unicode":0,"echo":false,"script":null)
+ ]
+}
+attack={
+"deadzone": 0.5,
+"events": [  ]
 }
 
 [physics]
