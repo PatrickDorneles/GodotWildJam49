@@ -9,13 +9,19 @@
 config_version=4
 
 _global_script_classes=[ {
-"base": "Node",
-"class": "PlayerStatus",
+"base": "KinematicBody2D",
+"class": "DamageableEntity",
 "language": "GDScript",
-"path": "res://entities/player/Status.gd"
+"path": "res://entities/DamageableEntity.gd"
+}, {
+"base": "KinematicBody2D",
+"class": "Player",
+"language": "GDScript",
+"path": "res://entities/player/Player.gd"
 } ]
 _global_script_class_icons={
-"PlayerStatus": ""
+"DamageableEntity": "",
+"Player": ""
 }
 
 [application]
@@ -30,6 +36,10 @@ Gravity="*res://auto/Gravity.gd"
 [debug]
 
 gdscript/warnings/return_value_discarded=false
+
+[editor_plugins]
+
+enabled=PoolStringArray( "res://addons/AsepriteWizard/plugin.cfg" )
 
 [importer_defaults]
 
@@ -79,12 +89,17 @@ look_down={
 }
 jump={
 "deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":32,"unicode":0,"echo":false,"script":null)
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":74,"unicode":0,"echo":false,"script":null)
  ]
 }
-attack={
+magic={
 "deadzone": 0.5,
 "events": [  ]
+}
+climb={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":0,"physical_scancode":76,"unicode":0,"echo":false,"script":null)
+ ]
 }
 
 [physics]
