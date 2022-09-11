@@ -7,6 +7,7 @@ onready var anim_tree = $AnimationTree
 onready var state_machine: AnimationNodeStateMachinePlayback = anim_tree["parameters/playback"]
 
 const MIN_VELOCITY_TO_STOP = 5
+const MAGIC_POSITION_X = 20
 
 export var direction: int = Direction.RIGHT
 
@@ -115,13 +116,14 @@ func jump_down():
 func wall_jump():
 	switch_direction()
 	motion.x = (status.jump_speed + status.max_speed) * direction
-	motion.y -= status.jump_speed
+	motion.y = -(status.jump_speed/1.25)
 
 # Utility Functions
 
 func set_direction(new_direction: int):
 	$Sprite.scale.x = new_direction
 	direction = new_direction
+	$MagicHitBox/Shape.position.x = MAGIC_POSITION_X * new_direction
 
 func switch_direction():
 	if direction == Direction.RIGHT: set_direction(Direction.LEFT)
