@@ -3,6 +3,8 @@ class_name Player extends KinematicBody2D
 var Direction = preload("res://entities/player/Direction.gd")
 
 onready var status = $Status
+onready var anim_tree = $AnimationTree
+onready var state_machine: AnimationNodeStateMachinePlayback = anim_tree["parameters/playback"]
 
 const MIN_VELOCITY_TO_STOP = 5
 
@@ -12,9 +14,10 @@ var motion = Vector2.ZERO
 
 var is_climbing: bool = false
 
+
 # Overrides
 func _ready() -> void:
-	pass
+	anim_tree.active = true
 
 func _physics_process(_delta: float) -> void:
 	verify_actions()
@@ -41,15 +44,19 @@ func get_horizontal_movement() -> float:
 	# When moving
 	if(Input.is_action_pressed("move_right")):
 		set_direction(Direction.RIGHT)
+		state_machine.travel("walking")
 		# easing the move using acceleration values
 		return min(lerp(motion.x, max_speed, acceleration), max_speed)
 	
 	if(Input.is_action_pressed("move_left")):
 		set_direction(Direction.LEFT)
+		state_machine.travel("walking")
 		# easing the move using acceleration values
 		return max(lerp(motion.x, -max_speed, acceleration), -max_speed)
 	
 	# When stopping
+	state_machine.travel("Idle")
+	
 	var is_motion_x_positive = motion.x > 0
 	var is_motion_x_negative = motion.x < 0
 	
