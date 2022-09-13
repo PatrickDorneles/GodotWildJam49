@@ -3,11 +3,12 @@ class_name Player extends KinematicBody2D
 var Direction = preload("res://entities/player/Direction.gd")
 
 onready var status = $Status
+onready var stamina = $Stamina
 onready var anim_tree = $AnimationTree
 onready var state_machine: AnimationNodeStateMachinePlayback = anim_tree["parameters/playback"]
 
 const MIN_VELOCITY_TO_STOP = 5
-const MAGIC_POSITION_X = 20
+const MAGIC_POSITION_X = 24
 
 export var direction: int = Direction.RIGHT
 
@@ -26,6 +27,9 @@ func _physics_process(_delta: float) -> void:
 	apply_gravity()
 	await_movement()
 	await_jump()
+
+	
+	print(motion)
 	
 	move_and_slide_with_snap(motion, Vector2.ZERO, Vector2.UP)
 
@@ -34,7 +38,7 @@ func verify_actions():
 	is_climbing = (
 		is_on_wall() 
 		and Input.is_action_pressed("climb") 
-		and $StaminaBar.has_stamina()
+		and stamina.has_stamina()
 		and not is_on_floor()
 	)
 
@@ -45,29 +49,33 @@ func get_horizontal_movement() -> float:
 	# When moving
 	if(Input.is_action_pressed("move_right")):
 		set_direction(Direction.RIGHT)
-		state_machine.travel("walking")
+		if not state_machine.get_current_node() == "Jumping": 
+			state_machine.travel("Walking")
 		# easing the move using acceleration values
-		return min(lerp(motion.x, max_speed, acceleration), max_speed)
+		return clamp(lerp(motion.x, max_speed, acceleration), -max_speed, max_speed)
 	
 	if(Input.is_action_pressed("move_left")):
 		set_direction(Direction.LEFT)
-		state_machine.travel("walking")
+		print(state_machine.get_current_node())
+		if not state_machine.get_current_node() == "Jumping": 
+				state_machine.travel("Walking")
 		# easing the move using acceleration values
-		return max(lerp(motion.x, -max_speed, acceleration), -max_speed)
+		return clamp(lerp(motion.x, -max_speed, acceleration), -max_speed, max_speed)
 	
 	# When stopping
-	state_machine.travel("Idle")
+	if not state_machine.get_current_node() == "Jumping": 
+		state_machine.travel("Idle")
 	
 	var is_motion_x_positive = motion.x > 0
 	var is_motion_x_negative = motion.x < 0
-	
-	var value = clamp(lerp(motion.x, 0, acceleration), -max_speed, max_speed)
-	
+
 	if is_motion_x_negative and motion.x > -MIN_VELOCITY_TO_STOP:
 		return 0.0
 	
 	if is_motion_x_positive and motion.x < MIN_VELOCITY_TO_STOP:
 		return 0.0
+	
+	var value = clamp(lerp(motion.x, 0, acceleration), -max_speed, max_speed)
 	
 	return value 
 
@@ -84,24 +92,28 @@ func await_jump():
 	if Input.is_action_just_pressed("jump"):
 		if is_on_floor():
 			jump()
+			state_machine.travel("Jumping")
 		
 		if is_on_floor() and Input.is_action_pressed("look_down"):
 			jump_down()
 		
 		if is_climbing:
 			wall_jump()
+			state_machine.travel("Jumping")
 
 func await_movement():
 	motion.x = get_horizontal_movement()
 	
-	if is_on_wall() and Input.is_action_pressed("climb") and $StaminaBar.has_stamina():
+	if is_on_wall() and Input.is_action_pressed("climb") and stamina.has_stamina():
 		motion.y = get_vertical_movement()
 		motion.x = direction
 
 func apply_gravity():
-	if not is_climbing or not $StaminaBar.has_stamina():
+	if not is_climbing:
 		motion = Gravity.apply_gravity_to_body(self, motion)
+		if motion.y > 1: state_machine.travel("Falling")
 		if is_on_floor(): $ClimbStaminaUsage.stop()
+			
 	
 	if is_climbing:
 		motion.y = 0
@@ -115,7 +127,7 @@ func jump_down():
 
 func wall_jump():
 	switch_direction()
-	motion.x = (status.jump_speed + status.max_speed) * direction
+	motion.x = status.max_speed * direction
 	motion.y = -(status.jump_speed/1.25)
 
 # Utility Functions
@@ -131,4 +143,4 @@ func switch_direction():
 
 
 func _on_ClimbStaminaUsage_timeout() -> void:
-	$StaminaBar.change_stamina(-1)
+	stamina.change_stamina(-1)

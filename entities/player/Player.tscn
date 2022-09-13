@@ -1,13 +1,22 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=29 format=2]
 
 [ext_resource path="res://assets/ui/under_stamina_bar.png" type="Texture" id=1]
 [ext_resource path="res://entities/player/Status.gd" type="Script" id=2]
 [ext_resource path="res://entities/player/Player.gd" type="Script" id=3]
 [ext_resource path="res://shaders/outline.tres" type="Shader" id=4]
-[ext_resource path="res://entities/player/StaminaBar.gd" type="Script" id=5]
+[ext_resource path="res://entities/player/Stamina.gd" type="Script" id=5]
 [ext_resource path="res://assets/ui/over_stamina_bar.png" type="Texture" id=6]
 [ext_resource path="res://assets/ui/stamina_bar.png" type="Texture" id=7]
 [ext_resource path="res://shaders/pixelate.tres" type="Shader" id=8]
+
+[sub_resource type="ShaderMaterial" id=16]
+
+[sub_resource type="ShaderMaterial" id=15]
+shader = ExtResource( 8 )
+shader_param/amount = 400
+
+[sub_resource type="RectangleShape2D" id=14]
+extents = Vector2( 11.2624, 10.6138 )
 
 [sub_resource type="RectangleShape2D" id=3]
 extents = Vector2( 7, 12.5 )
@@ -20,8 +29,24 @@ shader_param/pattern = 0
 shader_param/inside = false
 shader_param/add_margins = false
 
-[sub_resource type="StreamTexture" id=13]
+[sub_resource type="StreamTexture" id=17]
 load_path = "res://.import/sprite_player.png-b258756e51ab8490f8144798bf958b21.stex"
+
+[sub_resource type="Animation" id=18]
+length = 0.4
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = false
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 15.0, 16.0, 17.0, 18.0 ]
+}
 
 [sub_resource type="Animation" id=5]
 length = 0.6
@@ -40,10 +65,25 @@ tracks/0/keys = {
 "values": [ 0.0, 0.0, 1.0, 2.0, 3.0, 0.0 ]
 }
 
-[sub_resource type="Animation" id=6]
+[sub_resource type="Animation" id=19]
+length = 0.4
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = false
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 11.0, 12.0, 13.0, 14.0 ]
+}
+
+[sub_resource type="Animation" id=20]
 length = 0.7
 loop = true
-step = 0.05
 tracks/0/type = "value"
 tracks/0/path = NodePath("Sprite:frame")
 tracks/0/interp = 1
@@ -57,39 +97,83 @@ tracks/0/keys = {
 "values": [ 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0 ]
 }
 
+[sub_resource type="AnimationNodeAnimation" id=21]
+animation = "Falling"
+
 [sub_resource type="AnimationNodeAnimation" id=9]
 animation = "Idle"
 
-[sub_resource type="AnimationNodeAnimation" id=10]
-animation = "walking"
+[sub_resource type="AnimationNodeAnimation" id=22]
+animation = "Jumping"
 
-[sub_resource type="AnimationNodeStateMachineTransition" id=11]
+[sub_resource type="AnimationNodeAnimation" id=23]
+animation = "Walking"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=24]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=25]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=26]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=27]
+switch_mode = 2
 
 [sub_resource type="AnimationNodeStateMachine" id=7]
+states/Falling/node = SubResource( 21 )
+states/Falling/position = Vector2( 624.667, 151.222 )
 states/Idle/node = SubResource( 9 )
-states/Idle/position = Vector2( 448.333, 43 )
-states/walking/node = SubResource( 10 )
-states/walking/position = Vector2( 447.444, 128.333 )
-transitions = [ "Idle", "walking", SubResource( 11 ) ]
+states/Idle/position = Vector2( 461.666, 43 )
+states/Jumping/node = SubResource( 22 )
+states/Jumping/position = Vector2( 460.666, 263.667 )
+states/Walking/node = SubResource( 23 )
+states/Walking/position = Vector2( 308.666, 151.667 )
+transitions = [ "Idle", "Walking", SubResource( 24 ), "Walking", "Jumping", SubResource( 25 ), "Jumping", "Falling", SubResource( 26 ), "Falling", "Idle", SubResource( 27 ) ]
 start_node = "Idle"
+graph_offset = Vector2( 50, -63 )
 
 [sub_resource type="AnimationNodeStateMachinePlayback" id=8]
 
-[sub_resource type="ShaderMaterial" id=15]
-shader = ExtResource( 8 )
-shader_param/amount = 400
-
-[sub_resource type="RectangleShape2D" id=14]
-extents = Vector2( 11.2624, 10.6138 )
-
 [node name="Player" type="KinematicBody2D"]
+material = SubResource( 16 )
 script = ExtResource( 3 )
 
 [node name="Status" type="Node" parent="."]
 script = ExtResource( 2 )
 acceleration = 0.2
-acceleration_on_air = 0.08
-max_stamina = 5
+acceleration_on_air = 0.04
+jump_speed = 240
+
+[node name="Node" type="Node" parent="."]
+
+[node name="Stamina" type="TextureProgress" parent="."]
+modulate = Color( 1, 1, 1, 0.784314 )
+material = SubResource( 15 )
+margin_left = -8.0
+margin_top = -20.0
+margin_right = 8.0
+margin_bottom = -4.0
+rect_rotation = -90.0
+value = 64.0
+texture_under = ExtResource( 1 )
+texture_over = ExtResource( 6 )
+texture_progress = ExtResource( 7 )
+fill_mode = 5
+radial_initial_angle = 90.0
+nine_patch_stretch = true
+script = ExtResource( 5 )
+
+[node name="TimeToRecover" type="Timer" parent="Stamina"]
+one_shot = true
+
+[node name="RecoverTimer" type="Timer" parent="Stamina"]
+
+[node name="MagicHitBox" type="Area2D" parent="."]
+
+[node name="Shape" type="CollisionShape2D" parent="MagicHitBox"]
+modulate = Color( 0, 0.101961, 1, 1 )
+position = Vector2( 24, 6 )
+scale = Vector2( 0.836463, 1.01679 )
+shape = SubResource( 14 )
 
 [node name="PhysicalCollision" type="CollisionShape2D" parent="."]
 position = Vector2( 0, 4 )
@@ -101,57 +185,28 @@ zoom = Vector2( 0.33, 0.33 )
 
 [node name="Sprite" type="Sprite" parent="."]
 material = SubResource( 12 )
-texture = SubResource( 13 )
-hframes = 4
-vframes = 3
-frame = 7
+texture = SubResource( 17 )
+hframes = 5
+vframes = 4
+frame = 3
 __meta__ = {
 "_editor_description_": "YXNlcHJpdGVfd2l6YXJkX2NvbmZpZwpwbGF5ZXJ8PUFuaW1hdGlvblBsYXllcgpzb3VyY2V8PXJlczovL2Fzc2V0cy9zcHJpdGVzL3Nwcml0ZV9wbGF5ZXIvc3ByaXRlX3BsYXllci5hc2Vwcml0ZQpsYXllcnw9Cm9wX2V4cHw9RmFsc2UKb19mb2xkZXJ8PQpvX25hbWV8PQpvbmx5X3Zpc2libGV8PUZhbHNlCm9fZXhfcHw9Cg=="
 }
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/Falling = SubResource( 18 )
 anims/Idle = SubResource( 5 )
-anims/walking = SubResource( 6 )
+anims/Jumping = SubResource( 19 )
+anims/Walking = SubResource( 20 )
 
 [node name="AnimationTree" type="AnimationTree" parent="."]
 tree_root = SubResource( 7 )
 anim_player = NodePath("../AnimationPlayer")
 parameters/playback = SubResource( 8 )
 
-[node name="StaminaBar" type="TextureProgress" parent="."]
-modulate = Color( 1, 1, 1, 0.784314 )
-material = SubResource( 15 )
-margin_left = -8.0
-margin_top = -18.0
-margin_right = 8.0
-margin_bottom = -2.0
-rect_rotation = -90.0
-value = 64.0
-rounded = true
-texture_under = ExtResource( 1 )
-texture_over = ExtResource( 6 )
-texture_progress = ExtResource( 7 )
-fill_mode = 5
-radial_initial_angle = 90.0
-nine_patch_stretch = true
-script = ExtResource( 5 )
-
-[node name="TimeToRecover" type="Timer" parent="StaminaBar"]
-one_shot = true
-
-[node name="RecoverTimer" type="Timer" parent="StaminaBar"]
-
 [node name="ClimbStaminaUsage" type="Timer" parent="."]
 wait_time = 0.5
 
-[node name="MagicHitBox" type="Area2D" parent="."]
-
-[node name="Shape" type="CollisionShape2D" parent="MagicHitBox"]
-modulate = Color( 1, 0, 0, 1 )
-position = Vector2( 20, 5 )
-scale = Vector2( 0.836463, 1.01679 )
-shape = SubResource( 14 )
-
-[connection signal="timeout" from="StaminaBar/TimeToRecover" to="StaminaBar" method="_on_TimeToRecover_timeout"]
-[connection signal="timeout" from="StaminaBar/RecoverTimer" to="StaminaBar" method="_on_RecoverTimer_timeout"]
+[connection signal="timeout" from="Stamina/TimeToRecover" to="Stamina" method="_on_TimeToRecover_timeout"]
+[connection signal="timeout" from="Stamina/RecoverTimer" to="Stamina" method="_on_RecoverTimer_timeout"]
 [connection signal="timeout" from="ClimbStaminaUsage" to="." method="_on_ClimbStaminaUsage_timeout"]

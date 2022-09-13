@@ -1,17 +1,18 @@
 extends TextureProgress
 
-onready var player: Player = get_parent()
-onready var status = player.get_node("Status")
+
+export var max_stamina: int = 5
+var stamina: int = max_stamina
 
 func _ready() -> void:
-	max_value = status.max_stamina
-	value = status.stamina
+	max_value = max_stamina
+	value = stamina
 	visible = false
 
 func change_stamina(value_to_add: int):
 	$TimeToRecover.stop()
-	status.stamina = clamp(status.stamina + value_to_add, 0, status.max_stamina)
-	value = status.stamina
+	stamina = clamp(stamina + value_to_add, 0, max_stamina)
+	value = stamina
 	
 	if(value_to_add < 0):
 		visible = true
@@ -19,7 +20,7 @@ func change_stamina(value_to_add: int):
 		$TimeToRecover.start()
 
 func has_stamina():
-	return status.stamina > 0
+	return stamina > 0
 
 func _on_TimeToRecover_timeout() -> void:
 	$RecoverTimer.stop()
@@ -28,7 +29,7 @@ func _on_TimeToRecover_timeout() -> void:
 	$RecoverTimer.start()
 
 func _on_RecoverTimer_timeout() -> void:
-	if status.stamina == status.max_stamina:
+	if stamina == max_stamina:
 		$RecoverTimer.stop()
 		visible = false
 		return
