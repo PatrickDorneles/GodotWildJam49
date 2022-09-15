@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=2]
+[gd_scene load_steps=33 format=2]
 
 [ext_resource path="res://assets/ui/under_stamina_bar.png" type="Texture" id=1]
 [ext_resource path="res://entities/player/Status.gd" type="Script" id=2]
@@ -34,7 +34,6 @@ load_path = "res://.import/sprite_player.png-b258756e51ab8490f8144798bf958b21.st
 
 [sub_resource type="Animation" id=18]
 length = 0.4
-loop = true
 tracks/0/type = "value"
 tracks/0/path = NodePath("Sprite:frame")
 tracks/0/interp = 1
@@ -67,7 +66,6 @@ tracks/0/keys = {
 
 [sub_resource type="Animation" id=19]
 length = 0.4
-loop = true
 tracks/0/type = "value"
 tracks/0/path = NodePath("Sprite:frame")
 tracks/0/interp = 1
@@ -116,20 +114,27 @@ animation = "Walking"
 [sub_resource type="AnimationNodeStateMachineTransition" id=26]
 
 [sub_resource type="AnimationNodeStateMachineTransition" id=27]
-switch_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=28]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=29]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=30]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=31]
 
 [sub_resource type="AnimationNodeStateMachine" id=7]
 states/Falling/node = SubResource( 21 )
-states/Falling/position = Vector2( 624.667, 151.222 )
+states/Falling/position = Vector2( 634, 164.26 )
 states/Idle/node = SubResource( 9 )
 states/Idle/position = Vector2( 461.666, 43 )
 states/Jumping/node = SubResource( 22 )
-states/Jumping/position = Vector2( 460.666, 263.667 )
+states/Jumping/position = Vector2( 462.444, 277 )
 states/Walking/node = SubResource( 23 )
 states/Walking/position = Vector2( 308.666, 151.667 )
-transitions = [ "Idle", "Walking", SubResource( 24 ), "Walking", "Jumping", SubResource( 25 ), "Jumping", "Falling", SubResource( 26 ), "Falling", "Idle", SubResource( 27 ) ]
+transitions = [ "Idle", "Walking", SubResource( 24 ), "Walking", "Jumping", SubResource( 25 ), "Jumping", "Falling", SubResource( 26 ), "Falling", "Idle", SubResource( 27 ), "Idle", "Falling", SubResource( 28 ), "Walking", "Idle", SubResource( 29 ), "Idle", "Jumping", SubResource( 30 ), "Walking", "Falling", SubResource( 31 ) ]
 start_node = "Idle"
-graph_offset = Vector2( 50, -63 )
+graph_offset = Vector2( 66, -45 )
 
 [sub_resource type="AnimationNodeStateMachinePlayback" id=8]
 
@@ -188,7 +193,7 @@ material = SubResource( 12 )
 texture = SubResource( 17 )
 hframes = 5
 vframes = 4
-frame = 3
+frame = 1
 __meta__ = {
 "_editor_description_": "YXNlcHJpdGVfd2l6YXJkX2NvbmZpZwpwbGF5ZXJ8PUFuaW1hdGlvblBsYXllcgpzb3VyY2V8PXJlczovL2Fzc2V0cy9zcHJpdGVzL3Nwcml0ZV9wbGF5ZXIvc3ByaXRlX3BsYXllci5hc2Vwcml0ZQpsYXllcnw9Cm9wX2V4cHw9RmFsc2UKb19mb2xkZXJ8PQpvX25hbWV8PQpvbmx5X3Zpc2libGV8PUZhbHNlCm9fZXhfcHw9Cg=="
 }
